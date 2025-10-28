@@ -1,9 +1,10 @@
 import { useState, useRef, useEffect, useCallback } from 'react'
 import '../styles/DressSelection.css'
 
-const DressSelection = ({ onDressSelect, selectedDress, activeTab }) => {
+const DressSelection = ({ onDressSelect, selectedDress }) => {
     const [selectedCategory, setSelectedCategory] = useState('all')
     const [scrollPosition, setScrollPosition] = useState(0)
+    const [displayCount, setDisplayCount] = useState(5)
     const isDraggingRef = useRef(false)
     const isScrollingFromSlider = useRef(false)
     const containerRef = useRef(null)
@@ -95,6 +96,7 @@ const DressSelection = ({ onDressSelect, selectedDress, activeTab }) => {
 
     const handleCategoryClick = (categoryId) => {
         setSelectedCategory(categoryId)
+        setDisplayCount(5) // 카테고리 변경 시 표시 개수 리셋
     }
 
     // 드레스 카드 드래그 시작
@@ -132,6 +134,11 @@ const DressSelection = ({ onDressSelect, selectedDress, activeTab }) => {
                 const currentScroll = container.scrollTop
                 const percentage = (currentScroll / maxScroll) * 100
                 setScrollPosition(percentage)
+
+                // 스크롤이 하단 근처에 도달하면 추가 로딩 (80% 지점)
+                if (percentage > 80 && displayCount < filteredDresses.length) {
+                    setDisplayCount(prev => Math.min(prev + 5, filteredDresses.length))
+                }
             }
         }
 
@@ -139,7 +146,7 @@ const DressSelection = ({ onDressSelect, selectedDress, activeTab }) => {
         return () => {
             container.removeEventListener('scroll', handleScroll)
         }
-    }, [])
+    }, [displayCount, filteredDresses.length])
 
     const updateSliderPosition = useCallback((clientY) => {
         const track = document.querySelector('.slider-track')
@@ -206,33 +213,27 @@ const DressSelection = ({ onDressSelect, selectedDress, activeTab }) => {
             <div className="dress-content-wrapper" ref={containerRef}>
                 <div className="dress-grid-container" ref={contentRef}>
                     <div className="dress-grid">
-                        {activeTab === 'general' ? (
-                            filteredDresses.map((dress) => (
-                                <div
-                                    key={dress.id}
-                                    data-dress-id={dress.id}
-                                    className={`dress-card ${selectedDress?.id === dress.id ? 'selected' : ''}`}
-                                    onClick={() => handleDressClick(dress)}
-                                    draggable={true}
-                                    onDragStart={(e) => handleDragStart(e, dress)}
-                                >
-                                    <img src={dress.image} alt={dress.name} className="dress-image" />
-                                    {selectedDress?.id === dress.id && (
-                                        <div className="selected-badge">✓</div>
-                                    )}
-                                    <div className="drag-hint">드래그 가능</div>
-                                </div>
-                            ))
-                        ) : (
-                            <div className="custom-message">
-                                <p>커스텀 드레스 업로드 기능은 곧 제공될 예정입니다.</p>
+                        {filteredDresses.slice(0, displayCount).map((dress) => (
+                            <div
+                                key={dress.id}
+                                data-dress-id={dress.id}
+                                className={`dress-card ${selectedDress?.id === dress.id ? 'selected' : ''}`}
+                                onClick={() => handleDressClick(dress)}
+                                draggable={true}
+                                onDragStart={(e) => handleDragStart(e, dress)}
+                            >
+                                <img src={dress.image} alt={dress.name} className="dress-image" />
+                                {selectedDress?.id === dress.id && (
+                                    <div className="selected-badge">✓</div>
+                                )}
+                                <div className="drag-hint">드래그 가능</div>
                             </div>
-                        )}
+                        ))}
                     </div>
                 </div>
 
                 {/* 세로 슬라이더 */}
-                {activeTab === 'general' && filteredDresses.length > 0 && (
+                {filteredDresses.length > 0 && (
                     <div className="vertical-slider">
                         <button
                             className="slider-arrow slider-arrow-up"

@@ -2,10 +2,13 @@ import { useState, useEffect } from 'react'
 import Header from './components/Header'
 import ImageUpload from './components/ImageUpload'
 import DressSelection from './components/DressSelection'
+import CustomUpload from './components/CustomUpload'
+import CustomResult from './components/CustomResult'
 import ResultDisplay from './components/ResultDisplay'
 import IntroAnimation from './components/IntroAnimation'
 import VideoBackground from './components/VideoBackground'
-import { autoMatchImage } from './utils/api'
+import Modal from './components/Modal'
+import { autoMatchImage, removeBackground, customMatchImage } from './utils/api'
 import './styles/App.css'
 
 function App() {
@@ -16,6 +19,18 @@ function App() {
     const [resultImage, setResultImage] = useState(null)
     const [isProcessing, setIsProcessing] = useState(false)
     const [activeTab, setActiveTab] = useState('general')
+
+    // 커스텀 탭용 상태
+    const [fullBodyImage, setFullBodyImage] = useState(null)
+    const [customDressImage, setCustomDressImage] = useState(null)
+    const [customResultImage, setCustomResultImage] = useState(null)
+    const [isCustomProcessing, setIsCustomProcessing] = useState(false)
+    const [isBackgroundRemoved, setIsBackgroundRemoved] = useState(false) // 배경 제거 여부
+
+    // 모달 상태
+    const [modalOpen, setModalOpen] = useState(false)
+    const [modalTitle, setModalTitle] = useState('')
+    const [modalMessage, setModalMessage] = useState('')
 
     const handleImageUpload = (image) => {
         setUploadedImage(image)
@@ -31,6 +46,11 @@ function App() {
         setSelectedDress(null)
         setResultImage(null)
         setIsProcessing(false)
+        setFullBodyImage(null)
+        setCustomDressImage(null)
+        setCustomResultImage(null)
+        setIsCustomProcessing(false)
+        setIsBackgroundRemoved(false)
     }
 
     const handleNavigateToFitting = () => {
@@ -75,6 +95,100 @@ function App() {
         }
     }
 
+    // 커스텀 탭 핸들러들
+    const handleFullBodyUpload = (image) => {
+        setFullBodyImage(image)
+    }
+
+    const handleCustomDressUpload = (image) => {
+        setCustomDressImage(image)
+        setIsBackgroundRemoved(false) // 새 이미지 업로드 시 배경 제거 상태 초기화
+    }
+
+    const handleRemoveBackground = async () => {
+        if (!customDressImage) return
+
+        setIsCustomProcessing(true)
+
+        try {
+            // 백엔드 API 호출
+            const result = await removeBackground(customDressImage)
+
+            if (result.success && result.image) {
+                // 배경이 제거된 이미지로 업데이트
+                // Base64 문자열을 File 객체로 변환
+                const response = await fetch(result.image)
+                const blob = await response.blob()
+                const file = new File([blob], 'dress_no_bg.png', { type: 'image/png' })
+
+                setCustomDressImage(file)
+                setIsBackgroundRemoved(true) // 배경 제거 완료 표시
+                setIsCustomProcessing(false)
+                openModal('배경 제거 완료', '배경 제거가 완료되었습니다!')
+            } else {
+                throw new Error(result.message || '배경 제거에 실패했습니다.')
+            }
+        } catch (error) {
+            console.error('배경 제거 중 오류 발생:', error)
+            setIsCustomProcessing(false)
+            openModal('오류 발생', `배경 제거 중 오류가 발생했습니다: ${error.message}`)
+        }
+    }
+
+    // 모달 열기
+    const openModal = (title, message) => {
+        setModalTitle(title)
+        setModalMessage(message)
+        setModalOpen(true)
+    }
+
+    // 모달 닫기
+    const closeModal = () => {
+        setModalOpen(false)
+    }
+
+    // 수동 매칭 버튼 클릭
+    const handleManualMatch = () => {
+        if (!fullBodyImage) {
+            openModal('전신사진 필요', '전신사진을 먼저 업로드해주세요!')
+            return
+        }
+
+        if (!customDressImage) {
+            openModal('드레스 이미지 필요', '드레스 이미지를 먼저 업로드해주세요!')
+            return
+        }
+
+        if (!isBackgroundRemoved) {
+            openModal('배경 제거 필요', '배경지우기 버튼을 먼저 클릭해주세요')
+            return
+        }
+
+        handleCustomMatch(fullBodyImage, customDressImage)
+    }
+
+    const handleCustomMatch = async (fullBody, dress) => {
+        setIsCustomProcessing(true)
+
+        try {
+            // 백엔드 API 호출
+            const result = await customMatchImage(fullBody, dress)
+
+            if (result.success && result.result_image) {
+                // 매칭 결과 이미지 설정 (Base64 문자열)
+                setCustomResultImage(result.result_image)
+            } else {
+                throw new Error(result.message || '매칭에 실패했습니다.')
+            }
+
+            setIsCustomProcessing(false)
+        } catch (error) {
+            console.error('커스텀 매칭 중 오류 발생:', error)
+            setIsCustomProcessing(false)
+            openModal('오류 발생', `매칭 중 오류가 발생했습니다: ${error.message}`)
+        }
+    }
+
     return (
         <div className="app">
             {!showFittingPage && (
@@ -107,19 +221,48 @@ function App() {
                                         </button>
                                     </div>
 
-                                    <ImageUpload
-                                        onImageUpload={handleImageUpload}
-                                        uploadedImage={uploadedImage}
-                                        onDressDropped={handleDressDropped}
-                                        isProcessing={isProcessing}
-                                    />
+                                    {activeTab === 'general' ? (
+                                        <ImageUpload
+                                            onImageUpload={handleImageUpload}
+                                            uploadedImage={uploadedImage}
+                                            onDressDropped={handleDressDropped}
+                                            isProcessing={isProcessing}
+                                        />
+                                    ) : (
+                                        <CustomUpload
+                                            onFullBodyUpload={handleFullBodyUpload}
+                                            onDressUpload={handleCustomDressUpload}
+                                            onRemoveBackground={handleRemoveBackground}
+                                            fullBodyImage={fullBodyImage}
+                                            dressImage={customDressImage}
+                                            isProcessing={isCustomProcessing}
+                                            isBackgroundRemoved={isBackgroundRemoved}
+                                        />
+                                    )}
                                 </div>
+                                {activeTab === 'custom' && (
+                                    <div className="center-button-container">
+                                        <button
+                                            className="match-button"
+                                            onClick={handleManualMatch}
+                                            disabled={isCustomProcessing}
+                                        >
+                                            {isCustomProcessing ? '매칭 중...' : '매칭하기'}
+                                        </button>
+                                    </div>
+                                )}
                                 <div className="right-container">
-                                    <DressSelection
-                                        onDressSelect={handleDressSelect}
-                                        selectedDress={selectedDress}
-                                        activeTab={activeTab}
-                                    />
+                                    {activeTab === 'general' ? (
+                                        <DressSelection
+                                            onDressSelect={handleDressSelect}
+                                            selectedDress={selectedDress}
+                                        />
+                                    ) : (
+                                        <CustomResult
+                                            resultImage={customResultImage}
+                                            isProcessing={isCustomProcessing}
+                                        />
+                                    )}
                                 </div>
                             </div>
                         </div>
@@ -135,6 +278,13 @@ function App() {
             <footer className="footer">
                 <p>© 2025 Wedding Dress AI Matching. All rights reserved.</p>
             </footer>
+
+            <Modal
+                isOpen={modalOpen}
+                onClose={closeModal}
+                title={modalTitle}
+                message={modalMessage}
+            />
         </div>
     )
 }

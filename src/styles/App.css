@@ -30,7 +30,7 @@
 /* 콘텐츠 래퍼 - 좌우 분할 레이아웃 */
 .content-wrapper {
     display: flex;
-    gap: 30px;
+    gap: 5px;
     padding: 70px 10px 0;
     flex: 1;
     min-height: 0;
@@ -43,7 +43,7 @@
     flex-direction: column;
     min-width: 0;
     min-height: 0;
-    gap: 16px;
+    gap: 12px;
     overflow: hidden;
 }
 
@@ -55,6 +55,43 @@
     min-height: 0;
     height: 100%;
     overflow: hidden;
+}
+
+/* 중앙 매칭하기 버튼 컨테이너 */
+.center-button-container {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 4px;
+}
+
+.center-button-container .match-button {
+    padding: 14px 48px;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    border: none;
+    border-radius: 50px;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: var(--transition);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+}
+
+.center-button-container .match-button:hover:not(:disabled) {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.5);
+}
+
+.center-button-container .match-button:active:not(:disabled) {
+    transform: translateY(-1px);
+}
+
+.center-button-container .match-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
 }
 
 /* 탭 메뉴 - left-container 안 */
@@ -148,6 +185,15 @@
     .right-container {
         flex: 1;
         min-height: 400px;
+    }
+
+    .center-button-container {
+        padding: 0 3px;
+    }
+
+    .center-button-container .match-button {
+        padding: 12px 40px;
+        font-size: 15px;
     }
 }
 

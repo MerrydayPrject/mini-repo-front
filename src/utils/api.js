@@ -90,6 +90,66 @@ export const autoMatchImage = async (personImage, dressData) => {
 }
 
 /**
+ * 배경 제거 API 호출
+ * @param {File} dressImage - 드레스 이미지
+ * @returns {Promise} 배경이 제거된 이미지 결과
+ */
+export const removeBackground = async (dressImage) => {
+    try {
+        const formData = new FormData()
+        formData.append('dress_image', dressImage)
+
+        const response = await api.post('/api/remove-background', formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
+        })
+
+        // response.data 형식:
+        // {
+        //   success: true,
+        //   image: "data:image/png;base64,..." (Base64 문자열)
+        //   message: "배경 제거 완료"
+        // }
+        return response.data
+    } catch (error) {
+        console.error('배경 제거 오류:', error)
+        throw error
+    }
+}
+
+/**
+ * 커스텀 매칭 API 호출 (전신사진 + 드레스 이미지)
+ * @param {File} fullBodyImage - 전신 사진
+ * @param {File} dressImage - 드레스 이미지
+ * @returns {Promise} 매칭된 결과 이미지
+ */
+export const customMatchImage = async (fullBodyImage, dressImage) => {
+    try {
+        const formData = new FormData()
+        formData.append('full_body_image', fullBodyImage)
+        formData.append('dress_image', dressImage)
+
+        const response = await api.post('/api/custom-match', formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
+        })
+
+        // response.data 형식:
+        // {
+        //   success: true,
+        //   result_image: "data:image/png;base64,..." (Base64 문자열)
+        //   message: "매칭 완료"
+        // }
+        return response.data
+    } catch (error) {
+        console.error('커스텀 매칭 오류:', error)
+        throw error
+    }
+}
+
+/**
  * 이미지를 Base64로 변환
  * @param {File} file - 변환할 파일
  * @returns {Promise<string>} Base64 문자열
