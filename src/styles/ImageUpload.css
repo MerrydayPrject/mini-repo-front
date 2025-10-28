@@ -97,23 +97,29 @@
 
 .remove-button {
     position: absolute;
-    top: 12px;
-    right: 12px;
-    background: rgba(255, 0, 0, 0.9);
+    top: 8px;
+    right: 8px;
+    background: rgba(255, 99, 99, 0.9);
     color: white;
-    padding: 10px 20px;
-    border-radius: 8px;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
     font-size: 14px;
     font-weight: 600;
     transition: var(--transition);
     z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border: none;
 }
 
 .download-button {
     position: absolute;
     right: 12px;
     bottom: 12px;
-    background: rgba(34, 197, 94, 0.95);
+    background: linear-gradient(135deg, #ec4899, #be185d);
     color: white;
     padding: 10px 16px;
     border-radius: 8px;
@@ -121,16 +127,18 @@
     font-weight: 700;
     transition: var(--transition);
     z-index: 10;
+    box-shadow: 0 4px 12px rgba(236, 72, 153, 0.3);
 }
 
 .download-button:hover {
-    background: rgba(16, 185, 129, 1);
+    background: linear-gradient(135deg, #f472b6, #ec4899);
     transform: scale(1.05);
+    box-shadow: 0 6px 16px rgba(236, 72, 153, 0.4);
 }
 
 .remove-button:hover {
-    background: rgba(255, 0, 0, 1);
-    transform: scale(1.05);
+    background: rgba(255, 99, 99, 1);
+    transform: scale(1.1);
 }
 
 .processing-overlay {

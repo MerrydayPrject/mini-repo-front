@@ -126,7 +126,7 @@
     position: absolute;
     right: 12px;
     bottom: 12px;
-    background: rgba(34, 197, 94, 0.95);
+    background: linear-gradient(135deg, #ec4899, #be185d);
     color: white;
     padding: 10px 16px;
     border-radius: 8px;
@@ -134,11 +134,13 @@
     font-weight: 700;
     transition: var(--transition);
     z-index: 10;
+    box-shadow: 0 4px 12px rgba(236, 72, 153, 0.3);
 }
 
 .result-image-container .download-button:hover {
-    background: rgba(16, 185, 129, 1);
+    background: linear-gradient(135deg, #f472b6, #ec4899);
     transform: scale(1.05);
+    box-shadow: 0 6px 16px rgba(236, 72, 153, 0.4);
 }
 
 @media (max-width: 768px) {

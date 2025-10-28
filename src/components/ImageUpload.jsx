@@ -131,7 +131,7 @@ const ImageUpload = ({ onImageUpload, uploadedImage, onDressDropped, isProcessin
                         </div>
                     )}
                     <button className="remove-button" onClick={handleRemove}>
-                        ✕ 삭제
+                        ✕
                     </button>
                     {canDownload && imageSrc && !isProcessing && (
                         <button

@@ -103,7 +103,7 @@
     position: absolute;
     top: 8px;
     right: 8px;
-    background: rgba(255, 0, 0, 0.9);
+    background: rgba(255, 99, 99, 0.9);
     color: white;
     width: 28px;
     height: 28px;
@@ -120,7 +120,7 @@
 }
 
 .custom-remove-button:hover {
-    background: rgba(255, 0, 0, 1);
+    background: rgba(255, 99, 99, 1);
     transform: scale(1.1);
 }
 
