@@ -24,12 +24,22 @@ const ImageUpload = ({ onImageUpload, uploadedImage, onDressDropped, isProcessin
 
     const handleDragOver = (e) => {
         e.preventDefault()
+        e.stopPropagation()
         setIsDragging(true)
     }
 
     const handleDragLeave = (e) => {
         e.preventDefault()
-        setIsDragging(false)
+        e.stopPropagation()
+
+        // preview-container를 실제로 벗어났을 때만 isDragging을 false로 설정
+        const rect = e.currentTarget.getBoundingClientRect()
+        const x = e.clientX
+        const y = e.clientY
+
+        if (x <= rect.left || x >= rect.right || y <= rect.top || y >= rect.bottom) {
+            setIsDragging(false)
+        }
     }
 
     const handleDrop = (e) => {
