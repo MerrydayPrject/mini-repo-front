@@ -16,8 +16,6 @@ function App() {
     const [resultImage, setResultImage] = useState(null)
     const [isProcessing, setIsProcessing] = useState(false)
     const [activeTab, setActiveTab] = useState('general')
-    const [topVisibleDress, setTopVisibleDress] = useState(null)
-    const [isAutoMatching, setIsAutoMatching] = useState(false)
 
     const handleImageUpload = (image) => {
         setUploadedImage(image)
@@ -48,23 +46,11 @@ function App() {
         setHasShownIntro(true)
     }
 
-    // 맨 위 드레스 변경 감지
-    const handleTopDressChange = (dress) => {
-        setTopVisibleDress(dress)
-    }
-
-    // 자동 매칭 실행
-    useEffect(() => {
-        if (topVisibleDress && uploadedImage && !isAutoMatching) {
-            performAutoMatch(topVisibleDress)
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [topVisibleDress, uploadedImage])
-
-    const performAutoMatch = async (dress) => {
+    // 드레스 드롭으로 매칭 실행
+    const handleDressDropped = async (dress) => {
         if (!uploadedImage || !dress) return
 
-        setIsAutoMatching(true)
+        setIsProcessing(true)
 
         try {
             // API 호출 (백엔드 연결 시 사용)
@@ -73,18 +59,19 @@ function App() {
 
             // 임시: 시뮬레이션
             setTimeout(() => {
-                console.log('자동 매칭 실행:', {
+                console.log('드레스 매칭 실행:', {
                     dress: dress.name,
                     dressId: dress.id,
                     dressImage: dress.image
                 })
+                setSelectedDress(dress)
                 // 실제로는 백엔드에서 받은 결과 이미지를 설정
                 // setResultImage(result.result_image)
-                setIsAutoMatching(false)
-            }, 500)
+                setIsProcessing(false)
+            }, 1000)
         } catch (error) {
-            console.error('자동 매칭 중 오류 발생:', error)
-            setIsAutoMatching(false)
+            console.error('매칭 중 오류 발생:', error)
+            setIsProcessing(false)
         }
     }
 
@@ -123,6 +110,8 @@ function App() {
                                     <ImageUpload
                                         onImageUpload={handleImageUpload}
                                         uploadedImage={uploadedImage}
+                                        onDressDropped={handleDressDropped}
+                                        isProcessing={isProcessing}
                                     />
                                 </div>
                                 <div className="right-container">
@@ -130,7 +119,6 @@ function App() {
                                         onDressSelect={handleDressSelect}
                                         selectedDress={selectedDress}
                                         activeTab={activeTab}
-                                        onTopDressChange={handleTopDressChange}
                                     />
                                 </div>
                             </div>

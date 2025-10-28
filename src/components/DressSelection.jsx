@@ -1,14 +1,13 @@
 import { useState, useRef, useEffect, useCallback } from 'react'
 import '../styles/DressSelection.css'
 
-const DressSelection = ({ onDressSelect, selectedDress, activeTab, onTopDressChange }) => {
+const DressSelection = ({ onDressSelect, selectedDress, activeTab }) => {
     const [selectedCategory, setSelectedCategory] = useState('all')
     const [scrollPosition, setScrollPosition] = useState(0)
-    const [topVisibleDress, setTopVisibleDress] = useState(null)
     const isDraggingRef = useRef(false)
+    const isScrollingFromSlider = useRef(false)
     const containerRef = useRef(null)
     const contentRef = useRef(null)
-    const dressCardsRef = useRef([])
 
     // 카테고리 정의
     const categories = [
@@ -98,15 +97,49 @@ const DressSelection = ({ onDressSelect, selectedDress, activeTab, onTopDressCha
         setSelectedCategory(categoryId)
     }
 
-    // 슬라이더 위치 업데이트
+    // 드레스 카드 드래그 시작
+    const handleDragStart = (e, dress) => {
+        e.dataTransfer.effectAllowed = 'copy'
+        e.dataTransfer.setData('application/json', JSON.stringify(dress))
+    }
+
+    // 슬라이더 위치 업데이트 (슬라이더를 드래그할 때만)
     useEffect(() => {
-        if (containerRef.current && contentRef.current) {
+        if (isDraggingRef.current && containerRef.current && contentRef.current) {
+            isScrollingFromSlider.current = true
             const maxScroll = contentRef.current.scrollHeight - containerRef.current.clientHeight
             if (maxScroll > 0) {
                 contentRef.current.scrollTop = (scrollPosition / 100) * maxScroll
             }
+            // 스크롤이 완료된 후 플래그 해제
+            setTimeout(() => {
+                isScrollingFromSlider.current = false
+            }, 50)
         }
     }, [scrollPosition])
+
+    // 스크롤 이벤트로 슬라이더 위치 동기화 (마우스 휠 사용 시)
+    useEffect(() => {
+        const container = contentRef.current
+        if (!container) return
+
+        const handleScroll = () => {
+            // 슬라이더로 인한 스크롤인 경우 무시
+            if (isScrollingFromSlider.current) return
+
+            const maxScroll = container.scrollHeight - container.clientHeight
+            if (maxScroll > 0) {
+                const currentScroll = container.scrollTop
+                const percentage = (currentScroll / maxScroll) * 100
+                setScrollPosition(percentage)
+            }
+        }
+
+        container.addEventListener('scroll', handleScroll)
+        return () => {
+            container.removeEventListener('scroll', handleScroll)
+        }
+    }, [])
 
     const updateSliderPosition = useCallback((clientY) => {
         const track = document.querySelector('.slider-track')
@@ -142,71 +175,17 @@ const DressSelection = ({ onDressSelect, selectedDress, activeTab, onTopDressCha
 
     // 화살표 클릭
     const handleArrowClick = (direction) => {
+        isDraggingRef.current = true
         const step = 10
         if (direction === 'up') {
             setScrollPosition(Math.max(0, scrollPosition - step))
         } else {
             setScrollPosition(Math.min(100, scrollPosition + step))
         }
+        setTimeout(() => {
+            isDraggingRef.current = false
+        }, 100)
     }
-
-    // 맨 위에 보이는 드레스 찾기
-    const findTopVisibleDress = useCallback(() => {
-        if (!contentRef.current) return null
-
-        const container = contentRef.current
-        const containerRect = container.getBoundingClientRect()
-        const cards = container.querySelectorAll('.dress-card')
-
-        let topCard = null
-        let minDistance = Infinity
-
-        cards.forEach((card) => {
-            const cardRect = card.getBoundingClientRect()
-            // 컨테이너 상단으로부터의 거리 계산
-            const distance = Math.abs(cardRect.top - containerRect.top)
-
-            // 카드가 화면에 보이고 있고, 가장 위에 있는 카드인 경우
-            if (cardRect.top >= containerRect.top - cardRect.height * 0.5 &&
-                cardRect.top <= containerRect.bottom &&
-                distance < minDistance) {
-                minDistance = distance
-                topCard = card
-            }
-        })
-
-        if (topCard) {
-            const dressId = parseInt(topCard.getAttribute('data-dress-id'))
-            const dress = filteredDresses.find(d => d.id === dressId)
-            return dress
-        }
-
-        return null
-    }, [filteredDresses])
-
-    // 스크롤 이벤트 감지
-    useEffect(() => {
-        const container = contentRef.current
-        if (!container) return
-
-        const handleScroll = () => {
-            const topDress = findTopVisibleDress()
-            if (topDress && topDress.id !== topVisibleDress?.id) {
-                setTopVisibleDress(topDress)
-                if (onTopDressChange) {
-                    onTopDressChange(topDress)
-                }
-            }
-        }
-
-        container.addEventListener('scroll', handleScroll)
-        // 초기 실행
-        handleScroll()
-
-        return () => {
-            container.removeEventListener('scroll', handleScroll)
-        }
-    }, [findTopVisibleDress, topVisibleDress, onTopDressChange])
 
     return (
         <div className="dress-selection">
@@ -232,16 +211,16 @@ const DressSelection = ({ onDressSelect, selectedDress, activeTab, onTopDressCha
                                 <div
                                     key={dress.id}
                                     data-dress-id={dress.id}
-                                    className={`dress-card ${selectedDress?.id === dress.id ? 'selected' : ''} ${topVisibleDress?.id === dress.id ? 'top-visible' : ''}`}
+                                    className={`dress-card ${selectedDress?.id === dress.id ? 'selected' : ''}`}
                                     onClick={() => handleDressClick(dress)}
+                                    draggable={true}
+                                    onDragStart={(e) => handleDragStart(e, dress)}
                                 >
                                     <img src={dress.image} alt={dress.name} className="dress-image" />
                                     {selectedDress?.id === dress.id && (
                                         <div className="selected-badge">✓</div>
                                     )}
-                                    {topVisibleDress?.id === dress.id && (
-                                        <div className="top-indicator">👆</div>
-                                    )}
+                                    <div className="drag-hint">드래그 가능</div>
                                 </div>
                             ))
                         ) : (
