@@ -1,0 +1,329 @@
+.dress-selection {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    background: white;
+    padding: 12px 0 0;
+    overflow: hidden;
+}
+
+/* 카테고리 버튼 스타일 */
+.category-buttons {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 20px;
+    padding: 0 20px;
+    flex-wrap: wrap;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.category-button {
+    padding: 10px 24px;
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--text-dark);
+    background: white;
+    border: 2px solid #e5e5e5;
+    border-radius: 24px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.category-button:hover {
+    border-color: var(--primary-color);
+    background: rgba(236, 72, 153, 0.05);
+}
+
+.category-button.active {
+    background: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
+}
+
+/* 커스텀 메시지 */
+.custom-message {
+    padding: 80px 20px;
+    text-align: center;
+    color: var(--text-light);
+    font-size: 16px;
+    width: 100%;
+}
+
+/* 드레스 컨텐츠 래퍼 */
+.dress-content-wrapper {
+    position: relative;
+    flex: 1 1 auto;
+    min-height: 0;
+    height: 100%;
+    display: flex;
+    gap: 16px;
+    padding-right: 8px;
+}
+
+/* 드레스 그리드 컨테이너 - 세로 스크롤 숨김 */
+.dress-grid-container {
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 0 20px 20px;
+    flex: 1 1 auto;
+    min-height: 0;
+    height: 100%;
+    /* 스크롤바 숨김 */
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.dress-grid-container::-webkit-scrollbar {
+    display: none;
+}
+
+.dress-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 100%;
+    align-items: center;
+}
+
+.dress-card {
+    position: relative;
+    width: 50%;
+    padding-top: 40%;
+    background: var(--bg-white);
+    border-radius: var(--border-radius);
+    overflow: hidden;
+    cursor: pointer;
+    transition: var(--transition);
+    box-shadow: var(--shadow-sm);
+    border: 3px solid transparent;
+    flex-shrink: 0;
+}
+
+.dress-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-md);
+}
+
+.dress-card.selected {
+    border-color: var(--primary-color);
+    box-shadow: var(--shadow-lg);
+}
+
+.dress-image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: var(--transition);
+}
+
+.dress-card:hover .dress-image {
+    transform: scale(1.05);
+}
+
+.selected-badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: var(--primary-color);
+    color: white;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    font-weight: bold;
+    box-shadow: var(--shadow-md);
+    animation: popIn 0.3s ease;
+    z-index: 1;
+}
+
+.top-indicator {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background: rgba(255, 215, 0, 0.95);
+    color: white;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    box-shadow: 0 2px 8px rgba(255, 215, 0, 0.4);
+    animation: pulse 1.5s ease-in-out infinite;
+    z-index: 1;
+}
+
+.dress-card.top-visible {
+    border-color: rgba(255, 215, 0, 0.5);
+}
+
+@keyframes pulse {
+
+    0%,
+    100% {
+        transform: scale(1);
+        box-shadow: 0 2px 8px rgba(255, 215, 0, 0.4);
+    }
+
+    50% {
+        transform: scale(1.1);
+        box-shadow: 0 4px 16px rgba(255, 215, 0, 0.6);
+    }
+}
+
+@keyframes popIn {
+    0% {
+        transform: scale(0);
+    }
+
+    50% {
+        transform: scale(1.2);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+
+/* 세로 슬라이더 */
+.vertical-slider {
+    position: relative;
+    width: 40px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+    padding: 10px 0;
+}
+
+.slider-arrow {
+    width: 32px;
+    height: 32px;
+    background: white;
+    border: 2px solid var(--primary-color);
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    color: var(--primary-color);
+    transition: all 0.3s ease;
+    flex-shrink: 0;
+}
+
+.slider-arrow:hover {
+    background: var(--primary-color);
+    color: white;
+    transform: scale(1.1);
+}
+
+.slider-arrow:active {
+    transform: scale(0.95);
+}
+
+.slider-track {
+    flex: 1;
+    width: 4px;
+    background: #e5e5e5;
+    border-radius: 2px;
+    position: relative;
+    min-height: 100px;
+}
+
+.slider-handle {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    background: var(--primary-color);
+    border: 3px solid white;
+    border-radius: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    cursor: grab;
+    box-shadow: 0 2px 8px rgba(236, 72, 153, 0.3);
+    transition: all 0.2s ease;
+}
+
+.slider-handle:hover {
+    transform: translate(-50%, -50%) scale(1.2);
+    box-shadow: 0 4px 12px rgba(236, 72, 153, 0.5);
+}
+
+.slider-handle:active {
+    cursor: grabbing;
+    transform: translate(-50%, -50%) scale(1.1);
+}
+
+
+@media (max-width: 768px) {
+    .dress-selection {
+        padding: 12px 0 0;
+    }
+
+    .category-buttons {
+        gap: 8px;
+        margin-bottom: 16px;
+        padding: 0 12px;
+    }
+
+    .category-button {
+        padding: 8px 16px;
+        font-size: 13px;
+    }
+
+    .dress-content-wrapper {
+        gap: 8px;
+        padding-right: 4px;
+    }
+
+    .dress-grid-container {
+        padding: 0 12px 12px;
+    }
+
+    .dress-grid {
+        gap: 8px;
+    }
+
+    .dress-card {
+        width: 80%;
+        padding-top: 45%;
+    }
+
+    .selected-badge {
+        width: 26px;
+        height: 26px;
+        font-size: 14px;
+        top: 8px;
+        right: 8px;
+    }
+
+    .vertical-slider {
+        width: 30px;
+        padding: 8px 0;
+        gap: 6px;
+    }
+
+    .slider-arrow {
+        width: 26px;
+        height: 26px;
+        font-size: 12px;
+    }
+
+    .slider-handle {
+        width: 16px;
+        height: 16px;
+        border-width: 2px;
+    }
+}

@@ -1,0 +1,180 @@
+.app {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+
+.main-content {
+    flex: 1;
+    padding: 0;
+    position: relative;
+    z-index: 10;
+    margin-top: 90px;
+    /* 헤더 높이만큼 */
+    background: white;
+    min-height: calc(100vh - 90px);
+}
+
+/* 피팅 컨테이너 레이아웃 */
+.fitting-container {
+    width: 100%;
+    max-width: 1400px;
+    height: calc(100vh - 90px);
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+/* 콘텐츠 래퍼 - 좌우 분할 레이아웃 */
+.content-wrapper {
+    display: flex;
+    gap: 30px;
+    padding: 50px 10px 0;
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+}
+
+.left-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    min-height: 0;
+    gap: 16px;
+}
+
+.right-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    min-height: 0;
+    height: 100%;
+    overflow: hidden;
+}
+
+/* 탭 메뉴 - left-container 안 */
+.left-container .tab-menu {
+    display: flex;
+    gap: 8px;
+    padding: 0;
+    flex-shrink: 0;
+}
+
+.tab-button {
+    flex: 0 0 auto;
+    padding: 10px 32px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-light);
+    background: white;
+    border: 2px solid #e5e5e5;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.tab-button:hover {
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+}
+
+.tab-button.active {
+    background: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
+}
+
+.container {
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.upload-section,
+.dress-section {
+    margin-bottom: 60px;
+}
+
+.upload-section h2,
+.dress-section h2 {
+    font-size: 32px;
+    margin-bottom: 12px;
+    color: var(--text-dark);
+    text-align: center;
+}
+
+.section-description {
+    text-align: center;
+    color: var(--text-light);
+    font-size: 16px;
+    margin-bottom: 32px;
+}
+
+
+.footer {
+    background: var(--bg-white);
+    padding: 24px;
+    text-align: center;
+    color: var(--text-light);
+    box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.footer p {
+    font-size: 14px;
+}
+
+@media (max-width: 1024px) {
+    .content-wrapper {
+        flex-direction: column;
+        padding: 50px 10px 0;
+        gap: 20px;
+    }
+
+    .left-container {
+        flex: 0 0 auto;
+        width: 100%;
+        max-height: 450px;
+    }
+
+    .right-container {
+        flex: 1;
+        min-height: 400px;
+    }
+}
+
+@media (max-width: 768px) {
+    .main-content {
+        padding: 0;
+    }
+
+    .content-wrapper {
+        padding: 20px 8px 0;
+        gap: 16px;
+    }
+
+    .left-container .tab-menu {
+        gap: 6px;
+    }
+
+    .tab-button {
+        padding: 8px 12px;
+        font-size: 13px;
+    }
+
+    .upload-section h2,
+    .dress-section h2 {
+        font-size: 24px;
+    }
+
+    .process-button {
+        font-size: 18px;
+        padding: 16px 40px;
+    }
+
+    .left-container {
+        max-height: 350px;
+    }
+}
