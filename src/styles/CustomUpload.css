@@ -25,12 +25,12 @@
     background: var(--bg-white);
     border: 3px dashed var(--primary-color);
     border-radius: var(--border-radius);
-    padding: 30px 20px;
+    padding: 25px 20px;
     text-align: center;
     cursor: pointer;
     transition: var(--transition);
     width: 70%;
-    min-height: 200px;
+    min-height: 180px;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -70,8 +70,8 @@
     padding: 0;
     box-shadow: var(--shadow-md);
     width: 70%;
-    min-height: 200px;
-    max-height: 300px;
+    min-height: 180px;
+    max-height: 250px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -162,15 +162,15 @@
     }
 
     .custom-upload-area {
-        padding: 20px 15px;
+        padding: 18px 15px;
         width: 80%;
-        min-height: 180px;
+        min-height: 160px;
     }
 
     .custom-preview-container {
         width: 80%;
-        min-height: 180px;
-        max-height: 250px;
+        min-height: 160px;
+        max-height: 220px;
     }
 
     .upload-icon {

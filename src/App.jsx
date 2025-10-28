@@ -24,7 +24,8 @@ function App() {
     const [fullBodyImage, setFullBodyImage] = useState(null)
     const [customDressImage, setCustomDressImage] = useState(null)
     const [customResultImage, setCustomResultImage] = useState(null)
-    const [isCustomProcessing, setIsCustomProcessing] = useState(false)
+    const [isMatching, setIsMatching] = useState(false) // 매칭 처리 중
+    const [isRemovingBackground, setIsRemovingBackground] = useState(false) // 배경 제거 중
     const [isBackgroundRemoved, setIsBackgroundRemoved] = useState(false) // 배경 제거 여부
 
     // 모달 상태
@@ -49,7 +50,8 @@ function App() {
         setFullBodyImage(null)
         setCustomDressImage(null)
         setCustomResultImage(null)
-        setIsCustomProcessing(false)
+        setIsMatching(false)
+        setIsRemovingBackground(false)
         setIsBackgroundRemoved(false)
     }
 
@@ -108,7 +110,7 @@ function App() {
     const handleRemoveBackground = async () => {
         if (!customDressImage) return
 
-        setIsCustomProcessing(true)
+        setIsRemovingBackground(true)
 
         try {
             // 백엔드 API 호출
@@ -123,14 +125,14 @@ function App() {
 
                 setCustomDressImage(file)
                 setIsBackgroundRemoved(true) // 배경 제거 완료 표시
-                setIsCustomProcessing(false)
+                setIsRemovingBackground(false)
                 openModal('배경 제거 완료', '배경 제거가 완료되었습니다!')
             } else {
                 throw new Error(result.message || '배경 제거에 실패했습니다.')
             }
         } catch (error) {
             console.error('배경 제거 중 오류 발생:', error)
-            setIsCustomProcessing(false)
+            setIsRemovingBackground(false)
             openModal('오류 발생', `배경 제거 중 오류가 발생했습니다: ${error.message}`)
         }
     }
@@ -168,7 +170,7 @@ function App() {
     }
 
     const handleCustomMatch = async (fullBody, dress) => {
-        setIsCustomProcessing(true)
+        setIsMatching(true)
 
         try {
             // 백엔드 API 호출
@@ -181,10 +183,10 @@ function App() {
                 throw new Error(result.message || '매칭에 실패했습니다.')
             }
 
-            setIsCustomProcessing(false)
+            setIsMatching(false)
         } catch (error) {
             console.error('커스텀 매칭 중 오류 발생:', error)
-            setIsCustomProcessing(false)
+            setIsMatching(false)
             openModal('오류 발생', `매칭 중 오류가 발생했습니다: ${error.message}`)
         }
     }
@@ -235,7 +237,7 @@ function App() {
                                             onRemoveBackground={handleRemoveBackground}
                                             fullBodyImage={fullBodyImage}
                                             dressImage={customDressImage}
-                                            isProcessing={isCustomProcessing}
+                                            isProcessing={isRemovingBackground}
                                             isBackgroundRemoved={isBackgroundRemoved}
                                         />
                                     )}
@@ -245,9 +247,9 @@ function App() {
                                         <button
                                             className="match-button"
                                             onClick={handleManualMatch}
-                                            disabled={isCustomProcessing}
+                                            disabled={isMatching}
                                         >
-                                            {isCustomProcessing ? '매칭 중...' : '매칭하기'}
+                                            {isMatching ? '매칭 중...' : '매칭하기'}
                                         </button>
                                     </div>
                                 )}
@@ -260,7 +262,7 @@ function App() {
                                     ) : (
                                         <CustomResult
                                             resultImage={customResultImage}
-                                            isProcessing={isCustomProcessing}
+                                            isProcessing={isMatching}
                                         />
                                     )}
                                 </div>
