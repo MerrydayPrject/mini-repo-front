@@ -80,6 +80,10 @@
     overflow: hidden;
 }
 
+.custom-preview-container.fullbody {
+    max-height: 220px;
+}
+
 .custom-preview-container.dragging {
     border-color: var(--primary-color);
     background: rgba(236, 72, 153, 0.05);
@@ -121,19 +125,20 @@
 }
 
 .remove-bg-button {
-    margin-top: 12px;
-    padding: 11px 32px;
+    position: absolute;
+    right: 12px;
+    bottom: 12px;
+    padding: 11px 20px;
     background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
     color: white;
     border: none;
-    border-radius: 50px;
+    border-radius: 10px;
     font-size: 14px;
-    font-weight: 600;
+    font-weight: 700;
     cursor: pointer;
     transition: var(--transition);
     box-shadow: 0 4px 12px rgba(236, 72, 153, 0.3);
     white-space: nowrap;
-    display: block;
 }
 
 .remove-bg-button:hover:not(:disabled) {
@@ -171,6 +176,10 @@
         width: 80%;
         min-height: 160px;
         max-height: 220px;
+    }
+
+    .custom-preview-container.fullbody {
+        max-height: 200px;
     }
 
     .upload-icon {

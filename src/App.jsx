@@ -4,7 +4,6 @@ import ImageUpload from './components/ImageUpload'
 import DressSelection from './components/DressSelection'
 import CustomUpload from './components/CustomUpload'
 import CustomResult from './components/CustomResult'
-import ResultDisplay from './components/ResultDisplay'
 import IntroAnimation from './components/IntroAnimation'
 import VideoBackground from './components/VideoBackground'
 import Modal from './components/Modal'
@@ -16,8 +15,8 @@ function App() {
     const [hasShownIntro, setHasShownIntro] = useState(false)
     const [uploadedImage, setUploadedImage] = useState(null)
     const [selectedDress, setSelectedDress] = useState(null)
-    const [resultImage, setResultImage] = useState(null)
     const [isProcessing, setIsProcessing] = useState(false)
+    const [generalResultImage, setGeneralResultImage] = useState(null)
     const [activeTab, setActiveTab] = useState('general')
 
     // 커스텀 탭용 상태
@@ -32,10 +31,14 @@ function App() {
     const [modalOpen, setModalOpen] = useState(false)
     const [modalTitle, setModalTitle] = useState('')
     const [modalMessage, setModalMessage] = useState('')
+    
+    // 이미지 업로드 모달 상태
+    const [imageUploadModalOpen, setImageUploadModalOpen] = useState(false)
+    const [pendingDress, setPendingDress] = useState(null)
 
     const handleImageUpload = (image) => {
         setUploadedImage(image)
-        setResultImage(null)
+        setGeneralResultImage(null)
     }
 
     const handleDressSelect = (dress) => {
@@ -45,8 +48,8 @@ function App() {
     const handleReset = () => {
         setUploadedImage(null)
         setSelectedDress(null)
-        setResultImage(null)
         setIsProcessing(false)
+        setGeneralResultImage(null)
         setFullBodyImage(null)
         setCustomDressImage(null)
         setCustomResultImage(null)
@@ -77,7 +80,6 @@ function App() {
         try {
             // API 호출 (백엔드 연결 시 사용)
             // const result = await autoMatchImage(uploadedImage, dress)
-            // setResultImage(result.result_image)
 
             // 임시: 시뮬레이션
             setTimeout(() => {
@@ -88,7 +90,20 @@ function App() {
                 })
                 setSelectedDress(dress)
                 // 실제로는 백엔드에서 받은 결과 이미지를 설정
-                // setResultImage(result.result_image)
+                // 임시로 업로드 이미지를 결과로 사용 (데모)
+                if (uploadedImage) {
+                    try {
+                        const reader = new FileReader()
+                        reader.onloadend = () => {
+                            setGeneralResultImage(reader.result)
+                            setIsProcessing(false)
+                        }
+                        reader.readAsDataURL(uploadedImage)
+                    } catch (e) {
+                        setIsProcessing(false)
+                    }
+                    return
+                }
                 setIsProcessing(false)
             }, 1000)
         } catch (error) {
@@ -149,6 +164,36 @@ function App() {
         setModalOpen(false)
     }
 
+    // 이미지 업로드 모달 열기
+    const openImageUploadModal = (dress) => {
+        setPendingDress(dress)
+        setImageUploadModalOpen(true)
+    }
+
+    // 이미지 업로드 모달 닫기
+    const closeImageUploadModal = () => {
+        setImageUploadModalOpen(false)
+        setPendingDress(null)
+    }
+
+    // 이미지 업로드 후 드레스 매칭 실행
+    const handleImageUploadedForDress = (image) => {
+        setUploadedImage(image)
+        closeImageUploadModal()
+        
+        // 이미지 업로드 후 자동으로 드레스 매칭 실행
+        if (pendingDress) {
+            setTimeout(() => {
+                handleDressDropped(pendingDress)
+            }, 100)
+        }
+    }
+
+    // 이미지 업로드 필요 시 호출되는 핸들러 (드레스 드롭 시)
+    const handleImageUploadRequired = (dress) => {
+        openImageUploadModal(dress)
+    }
+
     // 수동 매칭 버튼 클릭
     const handleManualMatch = () => {
         if (!fullBodyImage) {
@@ -203,77 +248,73 @@ function App() {
 
             {showFittingPage && (
                 <main className="main-content">
-                    {!resultImage ? (
-                        <div className="fitting-container">
-                            <div className="content-wrapper">
-                                <div className="left-container">
-                                    {/* 탭 메뉴 */}
-                                    <div className="tab-menu">
-                                        <button
-                                            className={`tab-button ${activeTab === 'general' ? 'active' : ''}`}
-                                            onClick={() => setActiveTab('general')}
-                                        >
-                                            일반
-                                        </button>
-                                        <button
-                                            className={`tab-button ${activeTab === 'custom' ? 'active' : ''}`}
-                                            onClick={() => setActiveTab('custom')}
-                                        >
-                                            커스텀
-                                        </button>
-                                    </div>
+                    <div className="fitting-container">
+                        <div className="content-wrapper">
+                            <div className="left-container">
+                                {/* 탭 메뉴 */}
+                                <div className="tab-menu">
+                                    <button
+                                        className={`tab-button ${activeTab === 'general' ? 'active' : ''}`}
+                                        onClick={() => setActiveTab('general')}
+                                    >
+                                        일반
+                                    </button>
+                                    <button
+                                        className={`tab-button ${activeTab === 'custom' ? 'active' : ''}`}
+                                        onClick={() => setActiveTab('custom')}
+                                    >
+                                        커스텀
+                                    </button>
+                                </div>
 
-                                    {activeTab === 'general' ? (
-                                        <ImageUpload
-                                            onImageUpload={handleImageUpload}
-                                            uploadedImage={uploadedImage}
-                                            onDressDropped={handleDressDropped}
-                                            isProcessing={isProcessing}
-                                        />
-                                    ) : (
-                                        <CustomUpload
-                                            onFullBodyUpload={handleFullBodyUpload}
-                                            onDressUpload={handleCustomDressUpload}
-                                            onRemoveBackground={handleRemoveBackground}
-                                            fullBodyImage={fullBodyImage}
-                                            dressImage={customDressImage}
-                                            isProcessing={isRemovingBackground}
-                                            isBackgroundRemoved={isBackgroundRemoved}
-                                        />
-                                    )}
-                                </div>
-                                {activeTab === 'custom' && (
-                                    <div className="center-button-container">
-                                        <button
-                                            className="match-button"
-                                            onClick={handleManualMatch}
-                                            disabled={isMatching}
-                                        >
-                                            {isMatching ? '매칭 중...' : '매칭하기'}
-                                        </button>
-                                    </div>
+                                {activeTab === 'general' ? (
+                                    <ImageUpload
+                                        onImageUpload={handleImageUpload}
+                                        uploadedImage={uploadedImage}
+                                        onDressDropped={handleDressDropped}
+                                        isProcessing={isProcessing}
+                                        canDownload={!isProcessing && !!selectedDress && !!(generalResultImage || uploadedImage)}
+                                        resultImage={generalResultImage}
+                                        onImageUploadRequired={handleImageUploadRequired}
+                                    />
+                                ) : (
+                                    <CustomUpload
+                                        onFullBodyUpload={handleFullBodyUpload}
+                                        onDressUpload={handleCustomDressUpload}
+                                        onRemoveBackground={handleRemoveBackground}
+                                        fullBodyImage={fullBodyImage}
+                                        dressImage={customDressImage}
+                                        isProcessing={isRemovingBackground}
+                                        isBackgroundRemoved={isBackgroundRemoved}
+                                    />
                                 )}
-                                <div className="right-container">
-                                    {activeTab === 'general' ? (
-                                        <DressSelection
-                                            onDressSelect={handleDressSelect}
-                                            selectedDress={selectedDress}
-                                        />
-                                    ) : (
-                                        <CustomResult
-                                            resultImage={customResultImage}
-                                            isProcessing={isMatching}
-                                        />
-                                    )}
+                            </div>
+                            {activeTab === 'custom' && (
+                                <div className="center-button-container">
+                                    <button
+                                        className="match-button"
+                                        onClick={handleManualMatch}
+                                        disabled={isMatching}
+                                    >
+                                        {isMatching ? '매칭 중...' : '매칭하기'}
+                                    </button>
                                 </div>
+                            )}
+                            <div className="right-container">
+                                {activeTab === 'general' ? (
+                                    <DressSelection
+                                        onDressSelect={handleDressSelect}
+                                        selectedDress={selectedDress}
+                                    />
+                                ) : (
+                                    <CustomResult
+                                        resultImage={customResultImage}
+                                        isProcessing={isMatching}
+                                    />
+                                )}
                             </div>
                         </div>
-                    ) : (
-                        <ResultDisplay
-                            resultImage={resultImage}
-                            onReset={handleReset}
-                        />
-                    )}
+                    </div>
                 </main>
             )}
 
@@ -286,6 +327,15 @@ function App() {
                 onClose={closeModal}
                 title={modalTitle}
                 message={modalMessage}
+            />
+
+            {/* 이미지 업로드 모달: 문구 + 확인 버튼만 */}
+            <Modal
+                isOpen={imageUploadModalOpen}
+                onClose={closeImageUploadModal}
+                title=""
+                message="이미지를 업로드해 주세요"
+                center
             />
         </div>
     )

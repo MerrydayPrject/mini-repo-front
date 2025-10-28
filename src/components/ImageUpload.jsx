@@ -1,7 +1,7 @@
 import { useState, useRef } from 'react'
 import '../styles/ImageUpload.css'
 
-const ImageUpload = ({ onImageUpload, uploadedImage, onDressDropped, isProcessing }) => {
+const ImageUpload = ({ onImageUpload, uploadedImage, onDressDropped, isProcessing, onImageUploadRequired, canDownload = false, resultImage = null }) => {
     const [preview, setPreview] = useState(null)
     const [isDragging, setIsDragging] = useState(false)
     const fileInputRef = useRef(null)
@@ -48,9 +48,17 @@ const ImageUpload = ({ onImageUpload, uploadedImage, onDressDropped, isProcessin
 
         // 드레스 카드 드롭 확인
         const dressData = e.dataTransfer.getData('application/json')
-        if (dressData && preview) {
+        if (dressData) {
             try {
                 const dress = JSON.parse(dressData)
+                
+                // 이미지가 없으면 모달 띄우기
+                if (!preview && onImageUploadRequired) {
+                    onImageUploadRequired(dress)
+                    return
+                }
+                
+                // 이미지가 있으면 드레스 매칭 실행
                 if (onDressDropped) {
                     onDressDropped(dress)
                 }
@@ -78,6 +86,8 @@ const ImageUpload = ({ onImageUpload, uploadedImage, onDressDropped, isProcessin
             fileInputRef.current.value = ''
         }
     }
+
+    const imageSrc = resultImage || preview
 
     return (
         <div className="image-upload">
@@ -108,7 +118,7 @@ const ImageUpload = ({ onImageUpload, uploadedImage, onDressDropped, isProcessin
                     onDragLeave={handleDragLeave}
                     onDrop={handleDrop}
                 >
-                    <img src={preview} alt="Preview" className="preview-image" />
+                    <img src={imageSrc} alt="Preview" className="preview-image" />
                     {isProcessing && (
                         <div className="processing-overlay">
                             <div className="spinner"></div>
@@ -123,6 +133,27 @@ const ImageUpload = ({ onImageUpload, uploadedImage, onDressDropped, isProcessin
                     <button className="remove-button" onClick={handleRemove}>
                         ✕ 삭제
                     </button>
+                    {canDownload && imageSrc && !isProcessing && (
+                        <button
+                            className="download-button"
+                            onClick={(e) => {
+                                e.stopPropagation()
+                                try {
+                                    const link = document.createElement('a')
+                                    link.href = imageSrc
+                                    link.download = 'match_result.png'
+                                    document.body.appendChild(link)
+                                    link.click()
+                                    document.body.removeChild(link)
+                                } catch (err) {
+                                    console.error('다운로드 실패:', err)
+                                }
+                            }}
+                            title="결과 이미지를 다운로드"
+                        >
+                            ⬇ 다운로드
+                        </button>
+                    )}
                 </div>
             )}
         </div>

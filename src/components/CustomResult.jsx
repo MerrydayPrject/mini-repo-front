@@ -21,6 +21,27 @@ const CustomResult = ({ resultImage, isProcessing, onProcess }) => {
                 ) : (
                     <div className="result-image-container">
                         <img src={resultImage} alt="Matching Result" className="result-image" />
+                        {!isProcessing && resultImage && (
+                            <button
+                                className="download-button"
+                                onClick={(e) => {
+                                    e.stopPropagation()
+                                    try {
+                                        const link = document.createElement('a')
+                                        link.href = resultImage
+                                        link.download = 'custom_match_result.png'
+                                        document.body.appendChild(link)
+                                        link.click()
+                                        document.body.removeChild(link)
+                                    } catch (err) {
+                                        console.error('다운로드 실패:', err)
+                                    }
+                                }}
+                                title="결과 이미지를 다운로드"
+                            >
+                                ⬇ 다운로드
+                            </button>
+                        )}
                     </div>
                 )}
             </div>

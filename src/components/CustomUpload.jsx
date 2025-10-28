@@ -176,7 +176,7 @@ const CustomUpload = ({ onFullBodyUpload, onDressUpload, onRemoveBackground, onM
                     </div>
                 ) : (
                     <div
-                        className={`custom-preview-container ${isDraggingFullBody ? 'dragging' : ''}`}
+                        className={`custom-preview-container fullbody ${isDraggingFullBody ? 'dragging' : ''}`}
                         onDragOver={handleFullBodyDragOver}
                         onDragLeave={handleFullBodyDragLeave}
                         onDrop={handleFullBodyDrop}
@@ -221,18 +221,14 @@ const CustomUpload = ({ onFullBodyUpload, onDressUpload, onRemoveBackground, onM
                         <button className="custom-remove-button" onClick={handleDressRemove}>
                             ✕
                         </button>
+                        <button
+                            className="remove-bg-button"
+                            onClick={onRemoveBackground}
+                            disabled={isProcessing || isBackgroundRemoved}
+                        >
+                            {isBackgroundRemoved ? '✓ 배경 제거 완료' : isProcessing ? '처리 중...' : '배경지우기'}
+                        </button>
                     </div>
-                )}
-
-                {/* 배경지우기 버튼 */}
-                {dressPreview && (
-                    <button
-                        className="remove-bg-button"
-                        onClick={onRemoveBackground}
-                        disabled={isProcessing || isBackgroundRemoved}
-                    >
-                        {isBackgroundRemoved ? '✓ 배경 제거 완료' : isProcessing ? '처리 중...' : '배경지우기'}
-                    </button>
                 )}
             </div>
         </div>
