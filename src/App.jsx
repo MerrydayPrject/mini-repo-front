@@ -254,19 +254,27 @@ function App() {
                         <div className="content-wrapper">
                             <div className="left-container">
                                 {/* 탭 메뉴 */}
-                                <div className="tab-menu">
-                                    <button
-                                        className={`tab-button ${activeTab === 'general' ? 'active' : ''}`}
-                                        onClick={() => setActiveTab('general')}
-                                    >
-                                        일반
-                                    </button>
-                                    <button
-                                        className={`tab-button ${activeTab === 'custom' ? 'active' : ''}`}
-                                        onClick={() => setActiveTab('custom')}
-                                    >
-                                        커스텀
-                                    </button>
+                                <div className="tab-menu-container">
+                                    <div className="tab-menu">
+                                        <button
+                                            className={`tab-button ${activeTab === 'general' ? 'active' : ''}`}
+                                            onClick={() => setActiveTab('general')}
+                                        >
+                                            일반
+                                        </button>
+                                        <button
+                                            className={`tab-button ${activeTab === 'custom' ? 'active' : ''}`}
+                                            onClick={() => setActiveTab('custom')}
+                                        >
+                                            커스텀
+                                        </button>
+                                    </div>
+                                    <p className="tab-guide-text">
+                                        {activeTab === 'general'
+                                            ? '드래그 한 번으로 웨딩드레스를 자동 피팅해보세요'
+                                            : '나만의 드레스를 직접 업로드하고 완벽하게 피팅해보세요'
+                                        }
+                                    </p>
                                 </div>
 
                                 {activeTab === 'general' ? (
