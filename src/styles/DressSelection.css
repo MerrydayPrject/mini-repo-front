@@ -72,7 +72,7 @@
 }
 
 .category-button:hover {
-    border-color: var(--primary-color);
+    border-color: #f4acb7;
     background: rgba(236, 72, 153, 0.05);
 }
 
