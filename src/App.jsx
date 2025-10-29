@@ -30,7 +30,6 @@ function App() {
 
     // 모달 상태
     const [modalOpen, setModalOpen] = useState(false)
-    const [modalTitle, setModalTitle] = useState('')
     const [modalMessage, setModalMessage] = useState('')
 
     // 이미지 업로드 모달 상태
@@ -143,20 +142,19 @@ function App() {
                 setCustomDressImage(file)
                 setIsBackgroundRemoved(true) // 배경 제거 완료 표시
                 setIsRemovingBackground(false)
-                openModal('배경 제거 완료', '배경 제거가 완료되었습니다!')
+                openModal('배경 제거가 완료되었습니다!')
             } else {
                 throw new Error(result.message || '배경 제거에 실패했습니다.')
             }
         } catch (error) {
             console.error('배경 제거 중 오류 발생:', error)
             setIsRemovingBackground(false)
-            openModal('오류 발생', `배경 제거 중 오류가 발생했습니다: ${error.message}`)
+            openModal(`배경 제거 중 오류가 발생했습니다: ${error.message}`)
         }
     }
 
     // 모달 열기
-    const openModal = (title, message) => {
-        setModalTitle(title)
+    const openModal = (message) => {
         setModalMessage(message)
         setModalOpen(true)
     }
@@ -199,17 +197,17 @@ function App() {
     // 수동 매칭 버튼 클릭
     const handleManualMatch = () => {
         if (!fullBodyImage) {
-            openModal('전신사진 필요', '전신사진을 먼저 업로드해주세요!')
+            openModal('전신사진을 업로드해주세요')
             return
         }
 
         if (!customDressImage) {
-            openModal('드레스 이미지 필요', '드레스 이미지를 먼저 업로드해주세요!')
+            openModal('드레스 이미지를 업로드해주세요')
             return
         }
 
         if (!isBackgroundRemoved) {
-            openModal('배경 제거 필요', '배경지우기 버튼을 먼저 클릭해주세요')
+            openModal('배경지우기 버튼을 클릭해주세요')
             return
         }
 
@@ -234,7 +232,7 @@ function App() {
         } catch (error) {
             console.error('커스텀 매칭 중 오류 발생:', error)
             setIsMatching(false)
-            openModal('오류 발생', `매칭 중 오류가 발생했습니다: ${error.message}`)
+            openModal(`매칭 중 오류가 발생했습니다: ${error.message}`)
         }
     }
 
@@ -341,15 +339,14 @@ function App() {
             <Modal
                 isOpen={modalOpen}
                 onClose={closeModal}
-                title={modalTitle}
                 message={modalMessage}
+                center
             />
 
             {/* 이미지 업로드 모달: 문구 + 확인 버튼만 */}
             <Modal
                 isOpen={imageUploadModalOpen}
                 onClose={closeImageUploadModal}
-                title=""
                 message="이미지를 업로드해 주세요"
                 center
             />
