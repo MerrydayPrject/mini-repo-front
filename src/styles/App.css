@@ -61,9 +61,19 @@
 .drag-guide-arrow {
     flex-shrink: 0;
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
     padding: 0 4px 0 15px;
+    gap: 0;
+}
+
+.drag-guide-text {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--primary-color);
+    white-space: nowrap;
+    text-shadow: 0 1px 4px rgba(236, 72, 153, 0.2);
 }
 
 .arrow-icon {
@@ -71,7 +81,8 @@
     color: var(--primary-color);
     animation: slideRight 1.5s ease-in-out infinite;
     text-shadow: 0 2px 8px rgba(236, 72, 153, 0.3);
-    margin-left: 50px;
+    margin-left: 8px;
+    margin-top: -15px;
 }
 
 @keyframes slideRight {
@@ -99,7 +110,7 @@
 
 .center-button-container .match-button {
     padding: 14px 48px;
-    background: linear-gradient(135deg, #667eea, #764ba2);
+    background: linear-gradient(135deg, #f472b6, #db2777);
     color: white;
     border: none;
     border-radius: 50px;
@@ -107,12 +118,50 @@
     font-weight: 700;
     cursor: pointer;
     transition: var(--transition);
-    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+    box-shadow: 0 6px 20px rgba(244, 114, 182, 0.4);
+    position: relative;
+    overflow: hidden;
+}
+
+.center-button-container .match-button::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(45deg,
+            transparent 30%,
+            rgba(255, 255, 255, 0.3) 50%,
+            transparent 70%);
+    transform: translateX(-100%) translateY(-100%) rotate(45deg);
+    transition: transform 0.6s;
 }
 
 .center-button-container .match-button:hover:not(:disabled) {
     transform: translateY(-3px);
-    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.5);
+    box-shadow: 0 8px 25px rgba(236, 72, 153, 0.5);
+    background: linear-gradient(135deg, #ec4899, #be185d);
+    animation: sparkle 1.5s ease-in-out infinite;
+}
+
+.center-button-container .match-button:hover:not(:disabled)::before {
+    transform: translateX(100%) translateY(100%) rotate(45deg);
+}
+
+@keyframes sparkle {
+
+    0%,
+    100% {
+        box-shadow: 0 8px 25px rgba(236, 72, 153, 0.5),
+            0 0 20px rgba(236, 72, 153, 0.3);
+    }
+
+    50% {
+        box-shadow: 0 8px 30px rgba(236, 72, 153, 0.7),
+            0 0 30px rgba(236, 72, 153, 0.5),
+            0 0 40px rgba(236, 72, 153, 0.3);
+    }
 }
 
 .center-button-container .match-button:active:not(:disabled) {
@@ -239,10 +288,15 @@
         padding: 3px 0;
     }
 
+    .drag-guide-text {
+        font-size: 12px;
+    }
+
     .arrow-icon {
         font-size: 36px;
         transform: rotate(90deg);
         animation: slideDown 1.5s ease-in-out infinite;
+        margin-top: -6px;
     }
 
     @keyframes slideDown {
@@ -320,8 +374,13 @@
         padding: 2px 0;
     }
 
+    .drag-guide-text {
+        font-size: 11px;
+    }
+
     .arrow-icon {
         font-size: 32px;
+        margin-top: -5px;
     }
 
     .footer {

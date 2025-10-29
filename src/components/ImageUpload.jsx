@@ -1,10 +1,25 @@
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import '../styles/ImageUpload.css'
 
 const ImageUpload = ({ onImageUpload, uploadedImage, onDressDropped, isProcessing, onImageUploadRequired, canDownload = false, resultImage = null }) => {
     const [preview, setPreview] = useState(null)
     const [isDragging, setIsDragging] = useState(false)
+    const [showCheckmark, setShowCheckmark] = useState(false)
     const fileInputRef = useRef(null)
+    const prevProcessingRef = useRef(isProcessing)
+
+    // 매칭 완료 감지
+    useEffect(() => {
+        if (prevProcessingRef.current && !isProcessing && resultImage) {
+            // 로딩이 끝나고 결과 이미지가 있을 때
+            setShowCheckmark(true)
+            const timer = setTimeout(() => {
+                setShowCheckmark(false)
+            }, 1500) // 1.5초 후 사라짐
+            return () => clearTimeout(timer)
+        }
+        prevProcessingRef.current = isProcessing
+    }, [isProcessing, resultImage])
 
     const handleFileChange = (e) => {
         const file = e.target.files[0]
@@ -51,13 +66,13 @@ const ImageUpload = ({ onImageUpload, uploadedImage, onDressDropped, isProcessin
         if (dressData) {
             try {
                 const dress = JSON.parse(dressData)
-                
+
                 // 이미지가 없으면 모달 띄우기
                 if (!preview && onImageUploadRequired) {
                     onImageUploadRequired(dress)
                     return
                 }
-                
+
                 // 이미지가 있으면 드레스 매칭 실행
                 if (onDressDropped) {
                     onDressDropped(dress)
@@ -108,7 +123,7 @@ const ImageUpload = ({ onImageUpload, uploadedImage, onDressDropped, isProcessin
                     onClick={handleClick}
                 >
                     <div className="upload-icon">📷</div>
-                    <p className="upload-text">클릭하여 이미지를 업로드하세요</p>
+                    <p className="upload-text">얼굴 또는 전신 사진을 업로드 해주세요</p>
                     <p className="upload-subtext">JPG, PNG, JPEG 형식 지원</p>
                 </div>
             ) : (
@@ -123,6 +138,12 @@ const ImageUpload = ({ onImageUpload, uploadedImage, onDressDropped, isProcessin
                         <div className="processing-overlay">
                             <div className="spinner"></div>
                             <p>매칭 중...</p>
+                        </div>
+                    )}
+                    {showCheckmark && (
+                        <div className="processing-overlay">
+                            <div className="completion-icon">✓</div>
+                            <p>매칭완료</p>
                         </div>
                     )}
                     {isDragging && (

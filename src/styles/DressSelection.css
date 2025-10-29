@@ -37,9 +37,9 @@
 }
 
 .category-button.active {
-    background: var(--primary-color);
+    background: #f8b4d9;
     color: white;
-    border-color: var(--primary-color);
+    border-color: #f8b4d9;
 }
 
 /* 커스텀 메시지 */
@@ -60,6 +60,7 @@
     display: flex;
     gap: 16px;
     padding-right: 8px;
+    padding-left: 50px;
 }
 
 /* 드레스 그리드 컨테이너 - 세로 스크롤 숨김 */
@@ -89,7 +90,7 @@
 
 .dress-card {
     position: relative;
-    width: 50%;
+    width: 60%;
     padding-top: 40%;
     background: var(--bg-white);
     border-radius: var(--border-radius);
