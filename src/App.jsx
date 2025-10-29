@@ -299,7 +299,7 @@ function App() {
                             </div>
                             {activeTab === 'general' && (
                                 <div className="drag-guide-arrow">
-                                    <div className="drag-guide-text">드래그 해주세요</div>
+                                    <div className="drag-guide-text">이미지를 드래그 해주세요</div>
                                     <div className="arrow-icon">←</div>
                                 </div>
                             )}

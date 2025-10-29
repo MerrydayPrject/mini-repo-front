@@ -23,7 +23,7 @@
     text-align: center;
     cursor: pointer;
     transition: var(--transition);
-    width: 90%;
+    width: 100%;
     flex: 1;
     min-height: 300px;
     display: flex;
