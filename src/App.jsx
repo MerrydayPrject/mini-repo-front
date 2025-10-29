@@ -13,6 +13,7 @@ import './styles/App.css'
 function App() {
     const [showFittingPage, setShowFittingPage] = useState(false)
     const [hasShownIntro, setHasShownIntro] = useState(false)
+    const [skipIntro, setSkipIntro] = useState(false) // 인트로 스킵 여부
     const [uploadedImage, setUploadedImage] = useState(null)
     const [selectedDress, setSelectedDress] = useState(null)
     const [isProcessing, setIsProcessing] = useState(false)
@@ -31,7 +32,7 @@ function App() {
     const [modalOpen, setModalOpen] = useState(false)
     const [modalTitle, setModalTitle] = useState('')
     const [modalMessage, setModalMessage] = useState('')
-    
+
     // 이미지 업로드 모달 상태
     const [imageUploadModalOpen, setImageUploadModalOpen] = useState(false)
     const [pendingDress, setPendingDress] = useState(null)
@@ -64,6 +65,7 @@ function App() {
 
     const handleBackToMain = () => {
         setShowFittingPage(false)
+        setSkipIntro(true) // 피팅에서 돌아올 때는 인트로 스킵
         handleReset()
     }
 
@@ -180,7 +182,7 @@ function App() {
     const handleImageUploadedForDress = (image) => {
         setUploadedImage(image)
         closeImageUploadModal()
-        
+
         // 이미지 업로드 후 자동으로 드레스 매칭 실행
         if (pendingDress) {
             setTimeout(() => {
@@ -240,8 +242,8 @@ function App() {
         <div className="app">
             {!showFittingPage && (
                 <>
-                    {!hasShownIntro && <IntroAnimation onComplete={handleIntroComplete} />}
-                    <VideoBackground onNavigateToFitting={handleNavigateToFitting} />
+                    {!hasShownIntro && !skipIntro && <IntroAnimation onComplete={handleIntroComplete} />}
+                    <VideoBackground onNavigateToFitting={handleNavigateToFitting} skipIntro={skipIntro || hasShownIntro} />
                 </>
             )}
             <Header onBackToMain={showFittingPage ? handleBackToMain : null} />

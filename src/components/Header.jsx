@@ -9,7 +9,7 @@ const Header = ({ onBackToMain }) => {
                     className={`logo ${onBackToMain ? 'logo-clickable' : ''}`}
                     onClick={onBackToMain ? onBackToMain : undefined}
                 >
-                    <img src="/Image/Marry (1).png" alt="Marry Day" className="logo-image" />
+                    <h1 className="logo-text">Marry Day</h1>
                 </div>
                 <p className="tagline">AI가 완성하는 나만의 웨딩 드레스</p>
             </div>
