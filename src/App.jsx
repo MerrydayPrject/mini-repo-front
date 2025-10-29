@@ -332,10 +332,6 @@ function App() {
                 </main>
             )}
 
-            <footer className="footer">
-                <p>© 2025 Wedding Dress AI Matching. All rights reserved.</p>
-            </footer>
-
             <Modal
                 isOpen={modalOpen}
                 onClose={closeModal}

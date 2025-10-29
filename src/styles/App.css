@@ -71,18 +71,21 @@
 .drag-guide-text {
     font-size: 14px;
     font-weight: 600;
-    color: var(--primary-color);
+    color: #f4acb7;
     white-space: nowrap;
     text-shadow: 0 1px 4px rgba(236, 72, 153, 0.2);
+    margin-left: 80px;
+    cursor: default;
 }
 
 .arrow-icon {
     font-size: 48px;
-    color: var(--primary-color);
+    color: #f4acb7;
     animation: slideRight 1.5s ease-in-out infinite;
-    text-shadow: 0 2px 8px rgba(236, 72, 153, 0.3);
-    margin-left: 8px;
+    text-shadow: 0 2px 8px #f4acb7;
+    margin-left: 80px;
     margin-top: -15px;
+    cursor: default;
 }
 
 @keyframes slideRight {
@@ -110,7 +113,7 @@
 
 .center-button-container .match-button {
     padding: 14px 48px;
-    background: linear-gradient(135deg, #f472b6, #db2777);
+    background: #f4acb7;
     color: white;
     border: none;
     border-radius: 50px;
@@ -140,8 +143,8 @@
 
 .center-button-container .match-button:hover:not(:disabled) {
     transform: translateY(-3px);
-    box-shadow: 0 8px 25px rgba(236, 72, 153, 0.5);
-    background: linear-gradient(135deg, #ec4899, #be185d);
+    box-shadow: 0 8px 25px #f4acb7;
+    background: linear-gradient(135deg, #f19696);
     animation: sparkle 1.5s ease-in-out infinite;
 }
 
@@ -153,8 +156,7 @@
 
     0%,
     100% {
-        box-shadow: 0 8px 25px rgba(236, 72, 153, 0.5),
-            0 0 20px rgba(236, 72, 153, 0.3);
+        box-shadow: 0 8px 25px #f4acb7;
     }
 
     50% {
@@ -204,14 +206,14 @@
 }
 
 .tab-button:hover {
-    border-color: var(--primary-color);
-    color: var(--primary-color);
+    border-color: #f4acb7;
+    color: #f4acb7;
 }
 
 .tab-button.active {
-    background: var(--primary-color);
+    background: #f4acb7;
     color: white;
-    border-color: var(--primary-color);
+    border-color: #f4acb7;
 }
 
 /* 탭 가이드 텍스트 */
@@ -221,6 +223,7 @@
     color: #7e7a7ace;
     font-weight: 500;
     line-height: 1.4;
+    cursor: default;
 }
 
 .container {
@@ -248,19 +251,6 @@
     margin-bottom: 32px;
 }
 
-
-.footer {
-    background: var(--bg-white);
-    padding: 24px;
-    text-align: center;
-    color: var(--text-light);
-    box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.05);
-    margin-top: auto;
-}
-
-.footer p {
-    font-size: 14px;
-}
 
 @media (max-width: 1024px) {
     .fitting-container {
@@ -381,9 +371,5 @@
     .arrow-icon {
         font-size: 32px;
         margin-top: -5px;
-    }
-
-    .footer {
-        padding: 24px;
     }
 }

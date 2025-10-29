@@ -3,7 +3,7 @@
 .header {
     background: rgba(255, 255, 255, 0.95);
     padding: 8px 10px;
-    box-shadow: var(--shadow-sm);
+    box-shadow: var(--shadow-md);
     position: fixed;
     top: 0;
     left: 0;
@@ -36,21 +36,40 @@
     left: 20px;
     padding: 8px 20px;
     background: transparent;
-    border: 1px solid #000000c0;
+    border: 1px solid #9d8189;
     border-radius: 25px;
-    color: #000000c0;
+    color: #9d8189;
     font-size: 14px;
     font-weight: 600;
     cursor: pointer;
-    transition: transform 0.3s ease;
+    overflow: hidden;
+    transition: color 0.4s ease;
+}
+
+.back-to-main-button::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #9d8189;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.4s ease;
+    z-index: -1;
+}
+
+.back-to-main-button:hover::before {
+    transform: scaleX(1);
 }
 
 .back-to-main-button:hover {
-    transform: scale(1.1);
+    color: white;
 }
 
 .back-to-main-button:active {
-    transform: scale(1.05);
+    opacity: 0.9;
 }
 
 .logo {
@@ -66,7 +85,7 @@
     font-family: 'Great Vibes', cursive;
     font-size: 45px;
     font-weight: 400;
-    color: #000000c0;
+    color: #9d8189;
     margin: 0;
     padding: 0;
     text-shadow:
