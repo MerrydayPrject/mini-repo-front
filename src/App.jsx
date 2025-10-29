@@ -272,7 +272,7 @@ function App() {
                                     <p className="tab-guide-text">
                                         {activeTab === 'general'
                                             ? '드래그 한 번으로 웨딩드레스를 자동 피팅해보세요'
-                                            : '나만의 드레스를 직접 업로드하고 완벽하게 피팅해보세요'
+                                            : '배경 제거부터 피팅까지, AI가 모두 자동으로 도와드립니다'
                                         }
                                     </p>
                                 </div>
@@ -299,6 +299,11 @@ function App() {
                                     />
                                 )}
                             </div>
+                            {activeTab === 'general' && (
+                                <div className="drag-guide-arrow">
+                                    <div className="arrow-icon">←</div>
+                                </div>
+                            )}
                             {activeTab === 'custom' && (
                                 <div className="center-button-container">
                                     <button
