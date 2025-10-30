@@ -60,11 +60,13 @@ function App() {
 
     const handleNavigateToFitting = () => {
         setShowFittingPage(true)
+        setActiveTab('general')
     }
 
     const handleBackToMain = () => {
         setShowFittingPage(false)
         setSkipIntro(true) // 피팅에서 돌아올 때는 인트로 스킵
+        setActiveTab('general')
         handleReset()
     }
 
