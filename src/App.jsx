@@ -94,7 +94,11 @@ function App() {
         } catch (error) {
             console.error('매칭 중 오류 발생:', error)
             setIsProcessing(false)
-            openModal(`매칭 중 오류가 발생했습니다: ${error.message}`)
+            const serverMessage = error?.response?.data?.message || error?.response?.data?.error
+            const friendly = serverMessage
+                || (error?.code === 'ERR_NETWORK' ? '백엔드 서버에 연결할 수 없습니다.' : null)
+                || error.message
+            openModal(`매칭 중 오류가 발생했습니다: ${friendly}`)
         }
     }
 
