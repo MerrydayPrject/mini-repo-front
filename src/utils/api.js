@@ -55,7 +55,7 @@ export const autoMatchImage = async (personImage, dressData) => {
 }
 
 /**
- * 배경 제거 API 호출
+ * 배경 제거 API 호출 (드레스만 추출)
  * @param {File} image - 배경을 제거할 이미지
  * @returns {Promise} 배경이 제거된 이미지 결과
  */
@@ -64,7 +64,7 @@ export const removeBackground = async (image) => {
         const formData = new FormData()
         formData.append('file', image)
 
-        const response = await api.post('/api/remove-background', formData, {
+        const response = await api.post('/api/segment', formData, {
             headers: {
                 'Content-Type': 'multipart/form-data',
             },
@@ -74,7 +74,9 @@ export const removeBackground = async (image) => {
         // {
         //   success: true,
         //   result_image: "data:image/png;base64,..." (Base64 문자열)
-        //   message: "배경 제거 완료"
+        //   dress_detected: true,
+        //   dress_percentage: 45.67,
+        //   message: "드레스 영역: 45.67% 감지됨"
         // }
         return {
             success: response.data.success,
