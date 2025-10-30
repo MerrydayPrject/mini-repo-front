@@ -79,37 +79,22 @@ function App() {
         setIsProcessing(true)
 
         try {
-            // API 호출 (백엔드 연결 시 사용)
-            // const result = await autoMatchImage(uploadedImage, dress)
+            // 백엔드 API 호출
+            const result = await autoMatchImage(uploadedImage, dress)
 
-            // 임시: 시뮬레이션
-            setTimeout(() => {
-                console.log('드레스 매칭 실행:', {
-                    dress: dress.name,
-                    dressId: dress.id,
-                    dressImage: dress.image
-                })
+            if (result.success && result.result_image) {
+                // 매칭 결과 이미지 설정
                 setSelectedDress(dress)
-                // 실제로는 백엔드에서 받은 결과 이미지를 설정
-                // 임시로 업로드 이미지를 결과로 사용 (데모)
-                if (uploadedImage) {
-                    try {
-                        const reader = new FileReader()
-                        reader.onloadend = () => {
-                            setGeneralResultImage(reader.result)
-                            setIsProcessing(false)
-                        }
-                        reader.readAsDataURL(uploadedImage)
-                    } catch (e) {
-                        setIsProcessing(false)
-                    }
-                    return
-                }
-                setIsProcessing(false)
-            }, 1000)
+                setGeneralResultImage(result.result_image)
+            } else {
+                throw new Error(result.message || '매칭에 실패했습니다.')
+            }
+
+            setIsProcessing(false)
         } catch (error) {
             console.error('매칭 중 오류 발생:', error)
             setIsProcessing(false)
+            openModal(`매칭 중 오류가 발생했습니다: ${error.message}`)
         }
     }
 
