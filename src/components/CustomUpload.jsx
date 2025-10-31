@@ -208,7 +208,7 @@ const CustomUpload = ({ onFullBodyUpload, onDressUpload, onRemoveBackground, onM
                         onClick={handleDressClick}
                     >
                         <div className="upload-icon">👗</div>
-                        <p className="upload-text">드레스 이미지를 업로드 해주세요</p>
+                        <p className="upload-text">드레스 사진을 업로드 해주세요</p>
                     </div>
                 ) : (
                     <div
