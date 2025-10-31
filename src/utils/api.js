@@ -194,5 +194,23 @@ export const fileToBase64 = (file) => {
     })
 }
 
+/**
+ * 드레스 목록 조회
+ * @returns {Promise} 드레스 목록
+ */
+export const getDresses = async () => {
+    try {
+        const response = await api.get('/api/admin/dresses', {
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        })
+        return response.data
+    } catch (error) {
+        console.error('드레스 목록 조회 오류:', error)
+        throw error
+    }
+}
+
 export default api
 

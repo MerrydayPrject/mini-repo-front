@@ -1,11 +1,15 @@
 import { useState, useRef, useEffect, useCallback } from 'react'
 import '../styles/DressSelection.css'
+import { getDresses } from '../utils/api'
 
 const DressSelection = ({ onDressSelect, selectedDress }) => {
     const [selectedCategory, setSelectedCategory] = useState('all')
     const [scrollPosition, setScrollPosition] = useState(0)
     const [displayCount, setDisplayCount] = useState(5)
     const [categoryStartIndex, setCategoryStartIndex] = useState(0)
+    const [dresses, setDresses] = useState([])
+    const [loading, setLoading] = useState(true)
+    const [error, setError] = useState(null)
     const isDraggingRef = useRef(false)
     const isScrollingFromSlider = useRef(false)
     const containerRef = useRef(null)
@@ -30,72 +34,50 @@ const DressSelection = ({ onDressSelect, selectedDress }) => {
         categoryStartIndex + categoriesPerView
     )
 
-    // 드레스 데이터 (실제로는 백엔드에서 가져와야 함)
-    const dresses = [
-        {
-            id: 1,
-            name: '클래식 벨라인',
-            image: 'https://images.unsplash.com/photo-1519741497674-611481863552?w=400&h=600&fit=crop',
-            description: '우아하고 클래식한 벨라인',
-            category: 'ballgown'
-        },
-        {
-            id: 2,
-            name: '로맨틱 엠파이어',
-            image: 'https://images.unsplash.com/photo-1594552072238-6d1e1a92f5e9?w=400&h=600&fit=crop',
-            description: '우아한 엠파이어 라인',
-            category: 'empire'
-        },
-        {
-            id: 3,
-            name: '모던 머메이드',
-            image: 'https://images.unsplash.com/photo-1591604129853-0f9f1a6b3a07?w=400&h=600&fit=crop',
-            description: '섹시하고 현대적인 실루엣',
-            category: 'mermaid'
-        },
-        {
-            id: 4,
-            name: '큐트 미니드레스',
-            image: 'https://images.unsplash.com/photo-1600285225588-7bb71e68e5fb?w=400&h=600&fit=crop',
-            description: '발랄하고 경쾌한 미니',
-            category: 'mini'
-        },
-        {
-            id: 5,
-            name: '심플 A라인',
-            image: 'https://images.unsplash.com/photo-1617019114583-affb34d1b3cd?w=400&h=600&fit=crop',
-            description: '깔끔하고 세련된 A라인',
-            category: 'aline'
-        },
-        {
-            id: 6,
-            name: '글래머러스 프린세스',
-            image: 'https://images.unsplash.com/photo-1595959183082-7b570b7e08e2?w=400&h=600&fit=crop',
-            description: '화려하고 볼륨감 있는 스타일',
-            category: 'princess'
-        },
-        {
-            id: 7,
-            name: '엘레강스 벨라인',
-            image: 'https://images.unsplash.com/photo-1519741497674-611481863552?w=400&h=600&fit=crop',
-            description: '우아한 벨라인 실루엣',
-            category: 'ballgown'
-        },
-        {
-            id: 8,
-            name: '드림 프린세스',
-            image: 'https://images.unsplash.com/photo-1594552072238-6d1e1a92f5e9?w=400&h=600&fit=crop',
-            description: '꿈같은 프린세스 라인',
-            category: 'princess'
-        },
-        {
-            id: 9,
-            name: '화이트 레이스 드레스',
-            image: '/Image/dress1.jpg',
-            description: '우아한 화이트 레이스 드레스',
-            category: 'ballgown'
+    // 스타일을 카테고리로 변환하는 함수
+    const styleToCategory = (style) => {
+        const styleMap = {
+            'A라인': 'aline',
+            '미니드레스': 'mini',
+            '벨라인': 'ballgown',
+            '프린세스': 'princess'
         }
-    ]
+        return styleMap[style] || 'all'
+    }
+
+    // 드레스 목록 로드
+    useEffect(() => {
+        const loadDresses = async () => {
+            try {
+                setLoading(true)
+                setError(null)
+                const response = await getDresses()
+                
+                if (response.success && response.data) {
+                    // 백엔드 데이터 형식을 컴포넌트 형식으로 변환
+                    const transformedDresses = response.data.map((dress) => ({
+                        id: dress.id,
+                        name: dress.image_name.replace(/\.[^/.]+$/, ''), // 확장자 제거하여 이름 생성
+                        image: `/images/${dress.image_name}`, // 프록시 사용
+                        description: `${dress.style} 스타일의 드레스`,
+                        category: styleToCategory(dress.style)
+                    }))
+                    setDresses(transformedDresses)
+                } else {
+                    setError('드레스 목록을 불러올 수 없습니다.')
+                    setDresses([])
+                }
+            } catch (err) {
+                console.error('드레스 목록 로드 오류:', err)
+                setError('드레스 목록을 불러오는 중 오류가 발생했습니다.')
+                setDresses([])
+            } finally {
+                setLoading(false)
+            }
+        }
+
+        loadDresses()
+    }, [])
 
     // 선택된 카테고리에 따라 드레스 필터링
     const filteredDresses = selectedCategory === 'all'
@@ -249,24 +231,46 @@ const DressSelection = ({ onDressSelect, selectedDress }) => {
             {/* 드레스 그리드와 세로 슬라이더 */}
             <div className="dress-content-wrapper" ref={containerRef}>
                 <div className="dress-grid-container" ref={contentRef}>
-                    <div className="dress-grid">
-                        {filteredDresses.slice(0, displayCount).map((dress) => (
-                            <div
-                                key={dress.id}
-                                data-dress-id={dress.id}
-                                className={`dress-card ${selectedDress?.id === dress.id ? 'selected' : ''}`}
-                                onClick={() => handleDressClick(dress)}
-                                draggable={true}
-                                onDragStart={(e) => handleDragStart(e, dress)}
-                            >
-                                <img src={dress.image} alt={dress.name} className="dress-image" />
-                                {selectedDress?.id === dress.id && (
-                                    <div className="selected-badge">✓</div>
-                                )}
-                                <div className="drag-hint">드래그 가능</div>
+                    {loading && (
+                        <div className="dress-grid">
+                            <div style={{ textAlign: 'center', padding: '40px', color: '#666' }}>
+                                드레스 목록을 불러오는 중...
                             </div>
-                        ))}
-                    </div>
+                        </div>
+                    )}
+                    {error && (
+                        <div className="dress-grid">
+                            <div style={{ textAlign: 'center', padding: '40px', color: '#ef4444' }}>
+                                {error}
+                            </div>
+                        </div>
+                    )}
+                    {!loading && !error && (
+                        <div className="dress-grid">
+                            {filteredDresses.length === 0 ? (
+                                <div style={{ textAlign: 'center', padding: '40px', color: '#666' }}>
+                                    등록된 드레스가 없습니다.
+                                </div>
+                            ) : (
+                                filteredDresses.slice(0, displayCount).map((dress) => (
+                                    <div
+                                        key={dress.id}
+                                        data-dress-id={dress.id}
+                                        className={`dress-card ${selectedDress?.id === dress.id ? 'selected' : ''}`}
+                                        onClick={() => handleDressClick(dress)}
+                                        draggable={true}
+                                        onDragStart={(e) => handleDragStart(e, dress)}
+                                    >
+                                        <img src={dress.image} alt={dress.name} className="dress-image" />
+                                        {selectedDress?.id === dress.id && (
+                                            <div className="selected-badge">✓</div>
+                                        )}
+                                        <div className="drag-hint">드래그 가능</div>
+                                    </div>
+                                ))
+                            )}
+                        </div>
+                    )}
                 </div>
 
                 {/* 세로 슬라이더 */}
