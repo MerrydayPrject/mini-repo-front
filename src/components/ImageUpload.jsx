@@ -123,7 +123,7 @@ const ImageUpload = ({ onImageUpload, uploadedImage, onDressDropped, isProcessin
                     onClick={handleClick}
                 >
                     <div className="upload-icon">📷</div>
-                    <p className="upload-text">얼굴 또는 전신 사진을 업로드 해주세요</p>
+                    <p className="upload-text">전신 사진을 업로드 해주세요</p>
                     <p className="upload-subtext">JPG, PNG, JPEG 형식 지원</p>
                 </div>
             ) : (

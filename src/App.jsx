@@ -334,7 +334,7 @@ function App() {
             <Modal
                 isOpen={imageUploadModalOpen}
                 onClose={closeImageUploadModal}
-                message="이미지를 업로드해 주세요"
+                message="전신사진을 업로드해 주세요"
                 center
             />
         </div>
